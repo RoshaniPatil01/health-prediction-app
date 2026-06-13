@@ -10,7 +10,7 @@ def load_css():
 load_css()
 
 from database import *
-from ai_model import predict
+from ai_prediction import predict
 
 create_table()
 
