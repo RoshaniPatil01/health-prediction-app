@@ -1,0 +1,69 @@
+/* Background */
+.main {
+    background-color: #f5f7fb;
+}
+
+/* Title */
+h1 {
+    color: #1f4e79;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background-color: #1f4e79;
+}
+
+section[data-testid="stSidebar"] * {
+    color: white;
+    font-weight: 500;
+}
+
+ /* FIX SIDEBAR SELECTBOX TEXT (WORKING METHOD) */
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* FIX SELECTBOX SELECTED TEXT (Dashboard / Add Patient etc.) */
+div[data-baseweb="select"] div {
+    color: black !important;
+    background-color: white !important;
+}
+
+/* FIX SELECTED VALUE DISPLAY */
+div[data-baseweb="select"] span {
+    color: black !important;
+}
+
+/* FIX INPUT AREA OF SELECTBOX */
+div[data-baseweb="select"] input {
+    color: black !important;
+}
+
+/* Dropdown arrow */
+div[data-baseweb="select"] svg {
+    fill: black !important;
+    opacity: 1 !important;
+}
+
+/* Buttons */
+.stButton > button {
+    background-color: #1f4e79;
+    color: white;
+    border-radius: 8px;
+    padding: 8px 15px;
+    border: none;
+    font-weight: bold;
+}
+
+.stButton > button:hover {
+    background-color: #144166;
+    transform: scale(1.02);
+}
+
+/* Inputs */
+input {
+    border-radius: 8px !important;
+}
