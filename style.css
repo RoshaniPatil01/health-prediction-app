@@ -48,18 +48,22 @@ div[data-baseweb="select"] svg {
     opacity: 1 !important;
 }
 
-/* Buttons */
-.stButton > button {
-    background-color: #1f4e79;
-    color: white;
-    border-radius: 8px;
-    padding: 8px 15px;
-    border: none;
-    font-weight: bold;
+/* Target standard buttons AND form submit buttons explicitly */
+.stButton > button, 
+.stFormSubmitButton > button {
+    background-color: #1f4e79 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    padding: 8px 15px !important;
+    border: none !important;
+    font-weight: bold !important;
 }
 
-.stButton > button:hover {
-    background-color: #144166;
+/* Hover effects for both button types */
+.stButton > button:hover, 
+.stFormSubmitButton > button:hover {
+    background-color: #144166 !important;
+    color: white !important;
     transform: scale(1.02);
 }
 

@@ -42,6 +42,18 @@ def get_patients():
     conn.close()
     return rows
 
+def patient_exists(email):
+    conn = connect()
+
+    email = email.strip().lower()
+
+    row = conn.execute(
+        "SELECT id FROM patients WHERE LOWER(email) = ?",
+        (email,)
+    ).fetchone()
+
+    conn.close()
+    return row is not None
 
 def delete_patient(pid):
     conn = connect()
@@ -77,3 +89,4 @@ def update_patient(pid, data):
 
     conn.commit()
     conn.close()
+    

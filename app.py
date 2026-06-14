@@ -1,20 +1,25 @@
+
 import streamlit as st
 import pandas as pd
 import re
 from datetime import date
+import importlib
 
+# 1. ALWAYS SET PAGE CONFIG FIRST
+st.set_page_config(page_title="AI Health App", layout="wide")
+
+# 2. LOAD YOUR CSS AFTER THE PAGE IS CONFIGURED
 def load_css():
     with open("style.css") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 load_css()
 
-from database import *
+import database
+importlib.reload(database)
 from ai_prediction import predict
 
-create_table()
-
-st.set_page_config(page_title="AI Health App", layout="wide")
+database.create_table()
 
 # st.title("🏥 AI Health Prediction System")
 st.title("🏥 AI Health Prediction System")
@@ -39,7 +44,7 @@ if menu == "Dashboard":
 
     st.subheader("📊 Health Dashboard")
 
-    data = get_patients()
+    data = database.get_patients()
 
     total_patients = len(data)
 
@@ -78,27 +83,48 @@ if menu == "Dashboard":
     else:
         st.warning("No patient records available.")
 
+
 # ---------------- ADD PATIENT ----------------
+
 elif menu == "Add Patient":
 
     st.subheader("Enter Patient Details")
 
-    fullname = st.text_input("Full Name")
-    dob = st.date_input("Date of Birth", max_value=date.today())
-    email = st.text_input("Email")
-    glucose = st.number_input("Glucose")
-    haemoglobin = st.number_input("Haemoglobin")
-    cholesterol = st.number_input("Cholesterol")
+    with st.form("patient_form"):
 
-    if st.button("Predict & Save"):
+        fullname = st.text_input("Full Name")
 
-        email_regex = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        dob = st.date_input(
+            "Date of Birth",
+            value=date.today(),
+            min_value=date(1900, 1, 1),
+            max_value=date.today()
+        )
 
-        if fullname.strip() == "":
+        email = st.text_input("Email")
+        glucose = st.number_input("Glucose", min_value=0.0)
+        haemoglobin = st.number_input("Haemoglobin", min_value=0.0)
+        cholesterol = st.number_input("Cholesterol", min_value=0.0)
+
+        submit = st.form_submit_button("Predict & Save")
+
+    if submit:
+
+        email_clean = email.strip().lower()
+
+        email_regex = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
+
+        if not fullname.strip():
             st.error("Full Name is required")
 
-        elif not re.match(email_regex, email):
+        elif not email_clean:
+            st.error("Email is required")
+
+        elif not re.match(email_regex, email_clean):
             st.error("Invalid Email")
+
+        elif database.patient_exists(email_clean):
+            st.warning("⚠️ Patient already exists with this email")
 
         elif glucose <= 0:
             st.error("Glucose must be positive")
@@ -112,16 +138,12 @@ elif menu == "Add Patient":
         else:
             with st.spinner("Analyzing health data..."):
 
-                remarks = predict(
-                    glucose,
-                    haemoglobin,
-                    cholesterol
-                )
+                remarks = predict(glucose, haemoglobin, cholesterol)
 
-                insert_patient((
+                database.insert_patient((
                     fullname,
                     str(dob),
-                    email,
+                    email_clean,
                     glucose,
                     haemoglobin,
                     cholesterol,
@@ -154,8 +176,7 @@ elif menu == "View Patients":
 
     st.subheader("📋 Patient Records")
 
-    data = get_patients()
-
+    data = database.get_patients()
     if data:
 
         # Convert to DataFrame
@@ -202,7 +223,7 @@ elif menu == "View Patients":
         )
 
         if st.button("Delete Record"):
-            delete_patient(pid)
+            database.delete_patient(pid)
             st.success("Deleted Successfully")
 
     else:
@@ -223,25 +244,45 @@ elif menu == "Update Patient":
 
     st.subheader("✏️ Update Patient Record")
 
-    data = get_patients()
+    data = database.get_patients()
 
     if data:
 
-        # Select patient ID
-        patient_ids = [row[0] for row in data]
-        selected_id = st.selectbox("Select Patient ID", patient_ids)
+    # Get all patient IDs
+        patient_ids = [str(row[0]) for row in data]
 
+    # # Show available IDs
+    # st.write("Available Patient IDs:", ", ".join(patient_ids))
+
+    # User enters ID
+    entered_id = st.text_input("Enter Patient ID")
+
+    # Check if ID exists
+    if entered_id:
+        if entered_id not in patient_ids:
+            st.warning("⚠️ Patient ID does not exist.")
+        else:
+            st.success("✅ Patient ID found.")
+        
         # Get selected patient
         selected_patient = None
         for row in data:
-            if row[0] == selected_id:
+            if str(row[0]) == entered_id:
                 selected_patient = row
                 break
+
+        # Continue with your update form here
 
         if selected_patient:
 
             fullname = st.text_input("Full Name", selected_patient[1])
-            dob = st.date_input("Date of Birth", value=pd.to_datetime(selected_patient[2]))
+            # dob = st.date_input("Date of Birth", value=pd.to_datetime(selected_patient[2]))
+            dob = st.date_input(
+                        "Date of Birth",
+                        value=date.today(),
+                        min_value=date(1900, 1, 1),
+                        max_value=date.today()
+                    )
             email = st.text_input("Email", selected_patient[3])
             glucose = st.number_input("Glucose", value=float(selected_patient[4]))
             haemoglobin = st.number_input("Haemoglobin", value=float(selected_patient[5]))
@@ -265,8 +306,8 @@ elif menu == "Update Patient":
 
                         remarks = predict(glucose, haemoglobin, cholesterol)
 
-                        update_patient(
-                            selected_id,
+                        database.update_patient(
+                            int(entered_id),
                             (
                                 fullname,
                                 str(dob),
@@ -281,5 +322,5 @@ elif menu == "Update Patient":
                     st.success("Patient Updated Successfully")
                     st.info(remarks)
 
-    else:
-        st.warning("No patient records found.")
+    # else:
+    #     st.warning("No patient records found.")
