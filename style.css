@@ -21,23 +21,23 @@ section[data-testid="stSidebar"] * {
     font-weight: 500;
 }
 
- /* FIX SIDEBAR SELECTBOX TEXT (WORKING METHOD) */
+ /* SIDEBAR SELECTBOX TEXT (WORKING METHOD) */
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* FIX SELECTBOX SELECTED TEXT (Dashboard / Add Patient etc.) */
+/* SELECTBOX SELECTED TEXT (Dashboard / Add Patient etc.) */
 div[data-baseweb="select"] div {
     color: black !important;
     background-color: white !important;
 }
 
-/* FIX SELECTED VALUE DISPLAY */
+/* SELECTED VALUE DISPLAY */
 div[data-baseweb="select"] span {
     color: black !important;
 }
 
-/* FIX INPUT AREA OF SELECTBOX */
+/* INPUT AREA OF SELECTBOX */
 div[data-baseweb="select"] input {
     color: black !important;
 }

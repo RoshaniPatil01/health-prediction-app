@@ -21,24 +21,14 @@ from ai_prediction import predict
 
 database.create_table()
 
-# st.title("🏥 AI Health Prediction System")
 st.title("🏥 AI Health Prediction System")
 st.markdown("### Smart analysis of blood test reports using AI logic")
 
 menu = st.sidebar.selectbox("Menu", ["Dashboard", "Add Patient", "View Patients", "Update Patient"])
 
+
+
 # ---------------- DASHBOARD ----------------
-# if menu == "Dashboard":
-
-#     st.subheader("📊 Dashboard")
-
-#     data = get_patients()
-
-#     total_patients = len(data)
-
-#     st.metric("Total Patients", total_patients)
-
-
 
 if menu == "Dashboard":
 
@@ -82,6 +72,7 @@ if menu == "Dashboard":
 
     else:
         st.warning("No patient records available.")
+
 
 
 # ---------------- ADD PATIENT ----------------
@@ -153,24 +144,9 @@ elif menu == "Add Patient":
             st.success("Patient Saved Successfully")
             st.info(remarks)
 
+
+
 # ---------------- VIEW PATIENTS ----------------
-# else:
-
-#     st.subheader("Patient Records")
-
-#     data = get_patients()
-
-#     if data:
-#         for row in data:
-#             st.write(row)
-
-#         pid = st.number_input("Enter ID to delete", min_value=1)
-
-#         if st.button("Delete"):
-#             delete_patient(pid)
-#             st.success("Deleted Successfully")
-
-
 
 elif menu == "View Patients":
 
@@ -229,16 +205,8 @@ elif menu == "View Patients":
     else:
         st.warning("No patient records found.")
 
+
 # ---------------- UPDATE PATIENT ----------------
-# elif menu == "Update Patient":
-
-#     st.subheader("✏️ Update Patient")
-
-#     st.info(
-#         "Update functionality can be added later. "
-#         "Current project already demonstrates Create, Read and Delete operations."
-#     )
-
 
 elif menu == "Update Patient":
 
@@ -251,9 +219,7 @@ elif menu == "Update Patient":
     # Get all patient IDs
         patient_ids = [str(row[0]) for row in data]
 
-    # # Show available IDs
-    # st.write("Available Patient IDs:", ", ".join(patient_ids))
-
+   
     # User enters ID
     entered_id = st.text_input("Enter Patient ID")
 
@@ -275,18 +241,32 @@ elif menu == "Update Patient":
 
         if selected_patient:
 
-            fullname = st.text_input("Full Name", selected_patient[1])
-            # dob = st.date_input("Date of Birth", value=pd.to_datetime(selected_patient[2]))
+            fullname = st.text_input(
+                        "Full Name", 
+                        selected_patient[1]
+                    )
             dob = st.date_input(
                         "Date of Birth",
                         value=date.today(),
                         min_value=date(1900, 1, 1),
                         max_value=date.today()
                     )
-            email = st.text_input("Email", selected_patient[3])
-            glucose = st.number_input("Glucose", value=float(selected_patient[4]))
-            haemoglobin = st.number_input("Haemoglobin", value=float(selected_patient[5]))
-            cholesterol = st.number_input("Cholesterol", value=float(selected_patient[6]))
+            email = st.text_input(
+                        "Email", 
+                        selected_patient[3]
+                    )
+            glucose = st.number_input(
+                        "Glucose", 
+                        value=float(selected_patient[4])
+                    )
+            haemoglobin = st.number_input(
+                        "Haemoglobin", 
+                        value=float(selected_patient[5])
+                    )
+            cholesterol = st.number_input(
+                        "Cholesterol", 
+                        value=float(selected_patient[6])
+                    )
 
             if st.button("Update & Recalculate"):
 
